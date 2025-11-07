@@ -1,0 +1,30 @@
+@import 'ngx-toastr/toastr';
+
+:root {
+  --primary: #2563eb;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: #f6f7fb;
+}
+
+header {
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 20px;
+}
+
+nav a {
+  margin-right: 12px;
+  text-decoration: none;
+  color: #111827;
+}
+
+.container { padding: 16px 20px; }
+.card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; }
+.btn { background: var(--primary); color: white; border: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+.btn-secondary { background: #6b7280; }
+.input { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; }
+
