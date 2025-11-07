@@ -1,30 +1,57 @@
-@import 'ngx-toastr/toastr';
+﻿@use "@angular/material" as mat;
 
+@include mat.core();
+
+// Paletas base (API M2 estable)
+$primary: mat.define-palette(mat.$indigo-palette);
+$accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
+$warn: mat.define-palette(mat.$red-palette);
+
+$light-theme: mat.define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Roboto, sans-serif'
+  ),
+  density: 0
+));
+
+$dark-theme: mat.define-dark-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn,
+  ),
+  typography: mat.define-typography-config(
+    $font-family: 'Roboto, sans-serif'
+  ),
+  density: 0
+));
+
+/* Tipografía del sistema */
 :root {
-  --primary: #2563eb;
+  @include mat.typography-hierarchy($light-theme);
+}
+
+/* Tema claro por defecto */
+:root,
+[data-theme='light'] {
+  @include mat.all-component-themes($light-theme);
+}
+
+/* Tema oscuro */
+[data-theme='dark'] {
+  @include mat.all-component-themes($dark-theme);
 }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-family: Roboto, Arial, sans-serif;
   background: #f6f7fb;
 }
 
-header {
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 12px 20px;
-}
-
-nav a {
-  margin-right: 12px;
-  text-decoration: none;
-  color: #111827;
-}
-
 .container { padding: 16px 20px; }
-.card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; }
-.btn { background: var(--primary); color: white; border: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
-.btn-secondary { background: #6b7280; }
-.input { padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; }
-
+.spacer { flex: 1 1 auto; }

@@ -1,39 +1,64 @@
-import { Component, OnInit, inject } from '@angular/core';
+﻿import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ApiService, Product } from '../services/api';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 @Component({
   standalone: true,
   selector: 'app-sales-new',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatDatepickerModule, MatNativeDateModule],
   template: `
     <div class="card">
       <h2>Nueva Venta</h2>
       <form [formGroup]="form" (ngSubmit)="submit()" style="display:grid; gap:12px;">
-        <div style="display:flex; gap:12px; align-items:center;">
-          <label>Método de pago</label>
-          <input class="input" placeholder="Efectivo / Tarjeta" formControlName="payment_method" />
-          <label>Fecha</label>
-          <input class="input" type="datetime-local" formControlName="date" />
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <mat-form-field appearance="outline">
+            <mat-label>Método de pago</mat-label>
+            <input matInput placeholder="Efectivo / Tarjeta" formControlName="payment_method" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha</mat-label>
+            <input matInput [matDatepicker]="dt" formControlName="date" />
+            <mat-datepicker-toggle matSuffix [for]="dt"></mat-datepicker-toggle>
+            <mat-datepicker #dt></mat-datepicker>
+          </mat-form-field>
         </div>
         <div class="card">
           <h3>Items</h3>
-          <div *ngFor="let g of items.controls; let i = index" [formGroup]="g" style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-            <select class="input" formControlName="productId" (change)="onProductChange(i)">
-              <option [ngValue]="null">-- Producto --</option>
-              <option *ngFor="let p of products" [ngValue]="p.id">{{p.name}} (stock: {{p.stock}})</option>
-            </select>
-            <input class="input" type="number" placeholder="Cantidad" formControlName="quantity" (input)="recalc(i)" />
-            <input class="input" type="number" step="0.01" placeholder="Precio Unit" formControlName="unitPrice" (input)="recalc(i)" />
+          <div *ngFor="let g of items.controls; let i = index" [formGroup]="g" style="display:flex; gap:8px; align-items:center; margin-bottom:8px; flex-wrap:wrap;">
+            <mat-form-field appearance="outline" style="min-width:260px;">
+              <mat-label>Producto</mat-label>
+              <mat-select formControlName="productId" (selectionChange)="onProductChange(i)">
+                <mat-option [value]="null">-- Producto --</mat-option>
+                <mat-option *ngFor="let p of products" [value]="p.id">{{p.name}} (stock: {{p.stock}})</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Cantidad</mat-label>
+              <input matInput type="number" formControlName="quantity" (input)="recalc(i)" />
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Precio Unit</mat-label>
+              <input matInput type="number" step="0.01" formControlName="unitPrice" (input)="recalc(i)" />
+            </mat-form-field>
             <span>Subtotal: {{g.value.subtotal}}</span>
-            <button type="button" class="btn btn-secondary" (click)="removeItem(i)">Eliminar</button>
+            <button type="button" mat-button (click)="removeItem(i)"><mat-icon>delete</mat-icon> Eliminar</button>
           </div>
-          <button type="button" class="btn" (click)="addItem()">Agregar ítem</button>
+          <button type="button" mat-raised-button color="primary" (click)="addItem()"><mat-icon>add</mat-icon> Agregar ítem</button>
         </div>
         <div style="text-align:right; font-weight:bold;">Total: {{total}}</div>
         <div>
-          <button class="btn" type="submit" [disabled]="!items.controls.length">Crear Venta</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!items.controls.length">
+            <mat-icon style="margin-right:4px;">check</mat-icon> Crear Venta
+          </button>
         </div>
       </form>
     </div>
@@ -95,7 +120,7 @@ export class SalesNewComponent implements OnInit {
 
   submit() {
     const v = this.form.getRawValue();
-    const items = v.items
+    const items = (v.items as any[])
       .filter((i: any) => i.productId)
       .map((i: any) => ({
         productId: Number(i.productId),

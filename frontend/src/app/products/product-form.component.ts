@@ -1,25 +1,54 @@
-import { Component, OnInit, inject } from '@angular/core';
+﻿import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService, Product } from '../services/api';
 
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+
 @Component({
   standalone: true,
   selector: 'app-product-form',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatCheckboxModule, MatButtonModule, MatIconModule],
   template: `
     <div class="card">
       <h2>{{id ? 'Editar' : 'Nuevo'}} Artículo</h2>
-      <form [formGroup]="form" (ngSubmit)="submit()" style="display:grid; gap:12px; max-width:500px;">
-        <input class="input" placeholder="SKU" formControlName="sku" />
-        <input class="input" placeholder="Nombre" formControlName="name" />
-        <textarea class="input" placeholder="Descripción" formControlName="description"></textarea>
-        <input class="input" type="number" step="0.01" placeholder="Precio" formControlName="price" />
-        <input class="input" type="number" step="1" placeholder="Stock" formControlName="stock" />
-        <label><input type="checkbox" formControlName="active" /> Activo</label>
+      <form [formGroup]="form" (ngSubmit)="submit()" style="display:grid; gap:12px; max-width:520px;">
+        <mat-form-field appearance="outline">
+          <mat-label>SKU</mat-label>
+          <input matInput placeholder="SKU" formControlName="sku" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre</mat-label>
+          <input matInput placeholder="Nombre" formControlName="name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput placeholder="Descripción" formControlName="description"></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Precio</mat-label>
+          <input matInput type="number" step="0.01" placeholder="Precio" formControlName="price" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Stock</mat-label>
+          <input matInput type="number" step="1" placeholder="Stock" formControlName="stock" />
+        </mat-form-field>
+
+        <mat-checkbox formControlName="active">Activo</mat-checkbox>
+
         <div>
-          <button class="btn" type="submit">Guardar</button>
+          <button mat-raised-button color="primary" type="submit">
+            <mat-icon style="margin-right:4px;">save</mat-icon> Guardar
+          </button>
         </div>
       </form>
     </div>
@@ -59,4 +88,3 @@ export class ProductFormComponent implements OnInit {
     }
   }
 }
-
