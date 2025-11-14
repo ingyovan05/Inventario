@@ -1,6 +1,7 @@
 FROM node:20-alpine AS build
 ARG NODE_OPTIONS=--max-old-space-size=2048
 ENV NODE_OPTIONS=${NODE_OPTIONS}
+ENV LANG=C.UTF-8
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm i -g patch-package
@@ -10,6 +11,7 @@ COPY . .
 RUN npm run build
 
 FROM nginx:1.27-alpine
+ENV LANG=C.UTF-8
 COPY docker-entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 COPY --from=build /app/dist/frontend /usr/share/nginx/html

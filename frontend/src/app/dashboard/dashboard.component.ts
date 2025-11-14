@@ -15,7 +15,7 @@ import 'chart.js/auto';
       <div style="display:flex; gap:16px; flex-wrap: wrap; row-gap: 8px;">
         <div><b>Ventas:</b> {{summary?.sales?.sales_count || 0}}</div>
         <div><b>Total ventas:</b> {{summary?.sales?.total_sales || 0}}</div>
-        <div><b>ArtÃ­culos:</b> {{summary?.inventory?.products || 0}}</div>
+        <div><b>Artículos:</b> {{summary?.inventory?.products || 0}}</div>
         <div><b>Unidades:</b> {{summary?.inventory?.units || 0}}</div>
         <div><b>Valor inventario:</b> {{summary?.inventory?.stock_value || 0}}</div>
       </div>
@@ -52,3 +52,4 @@ export class DashboardComponent implements OnInit {
     });
   }
 }
+

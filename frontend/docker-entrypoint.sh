@@ -12,6 +12,7 @@ server {
   listen ${PORT_VAR};
   server_name _;
   root /usr/share/nginx/html;
+  charset utf-8;
   index index.html;
 
   location / {

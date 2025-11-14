@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
   template: `
     <div class="card">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-        <h2>Articulos</h2>
+        <h2>Artículos</h2>
         <a mat-raised-button color="primary" routerLink="/products/new">
           <mat-icon style="margin-right:4px;">add</mat-icon> Nuevo
         </a>
