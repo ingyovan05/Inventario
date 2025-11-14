@@ -30,6 +30,21 @@ build/
 # Angular
 .angular/cache/
 frontend/.angular/
+frontend/.cache/
+frontend/.eslintcache
+frontend/.sass-cache/
+frontend/.turbo/
+frontend/.nx/
+
+# Linters/Tools caches
+.eslintcache
+.stylelintcache
+.tsbuildinfo
+
+# Misc build tool caches
+.turbo/
+.parcel-cache/
+.cache-loader/
 
 # Env files
 .env
