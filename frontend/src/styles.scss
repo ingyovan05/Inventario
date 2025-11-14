@@ -45,6 +45,14 @@ $dark-theme: mat.define-dark-theme((
 /* Tema oscuro */
 [data-theme='dark'] {
   @include mat.all-component-themes($dark-theme);
+  color-scheme: dark;
+  --bg: #0b0f19;
+  --surface: #111827; /* slate-900 */
+  --surface-2: #1f2937; /* slate-800 */
+  --border: #374151; /* slate-700 */
+  --text: #e5e7eb; /* slate-200 */
+  --text-muted: #9ca3af; /* slate-400 */
+  --primary: #90caf9; /* light blue for contrast on dark */
 }
 
 body {
@@ -55,6 +63,34 @@ body {
 
 .container { padding: 16px 20px; }
 .spacer { flex: 1 1 auto; }
+
+/* Dark theme contrast fixes */
+[data-theme='dark'] body { background: var(--bg); color: var(--text); }
+[data-theme='dark'] .card { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+[data-theme='dark'] .mat-toolbar { background-color: var(--surface); color: var(--text); }
+[data-theme='dark'] a, [data-theme='dark'] .mat-mdc-button { color: var(--primary); }
+[data-theme='dark'] .mat-mdc-raised-button, [data-theme='dark'] .mat-mdc-unelevated-button { background: var(--surface-2); color: var(--text); }
+[data-theme='dark'] .mat-mdc-icon-button { color: var(--text); }
+
+/* Forms */
+[data-theme='dark'] .mat-mdc-form-field .mdc-text-field--filled, 
+[data-theme='dark'] .mat-mdc-form-field .mdc-text-field--outlined { background: var(--surface-2); color: var(--text); }
+[data-theme='dark'] .mat-mdc-input-element { color: var(--text); caret-color: var(--text); }
+[data-theme='dark'] .mdc-text-field .mdc-floating-label { color: var(--text-muted); }
+[data-theme='dark'] .mdc-text-field--outlined .mdc-notched-outline__leading,
+[data-theme='dark'] .mdc-text-field--outlined .mdc-notched-outline__trailing { border-color: var(--border); }
+[data-theme='dark'] .mdc-line-ripple { background-color: var(--text-muted); }
+
+/* Tables */
+[data-theme='dark'] table, [data-theme='dark'] .mat-mdc-table { background: var(--surface); color: var(--text); }
+[data-theme='dark'] th, [data-theme='dark'] td { border-color: var(--border); }
+[data-theme='dark'] tr:hover { background: rgba(255,255,255,0.04); }
+
+/* Menus/selects */
+[data-theme='dark'] .mat-mdc-menu-panel, 
+[data-theme='dark'] .mat-mdc-select-panel { background: var(--surface); color: var(--text); }
+[data-theme='dark'] .mat-mdc-option { color: var(--text); }
+[data-theme='dark'] .mat-mdc-option.mdc-list-item--selected { background: rgba(255,255,255,0.06); }
 
 /* Cards */
 .card {

@@ -1,10 +1,22 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Req, Query } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { SalesService } from './sales.service.js';
 import { CreateSaleDto } from './dto/create-sale.dto.js';
 
 @Controller('sales')
 export class SalesController {
-  constructor(private readonly salesService: SalesService) {}
+  constructor(private readonly salesService: SalesService, private jwt: JwtService) {}
+
+  private userIdFromReq(req: any): number | undefined {
+    const h: string | undefined = req?.headers?.authorization;
+    if (!h?.startsWith('Bearer ')) return undefined;
+    try {
+      const p: any = this.jwt.verify(h.slice(7));
+      return p?.sub;
+    } catch {
+      return undefined;
+    }
+  }
 
   @Get()
   findAll(@Query('userId') userId?: string) {
@@ -19,7 +31,7 @@ export class SalesController {
 
   @Post()
   create(@Body() dto: CreateSaleDto, @Req() req: any) {
-    const uid = req?.headers?.authorization?.startsWith('Bearer ') ? (require('jsonwebtoken').verify(req.headers.authorization.slice(7), process.env.JWT_SECRET || 'dev-secret') as any).sub : undefined;
+    const uid = this.userIdFromReq(req);
     return this.salesService.create(dto, uid);
   }
 }
