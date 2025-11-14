@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Size } from './size.entity.js';
 import { Color } from './color.entity.js';
+import { User } from './user.entity.js';
 
 @Entity('products')
 export class Product {
@@ -38,4 +39,12 @@ export class Product {
 
   @UpdateDateColumn()
   updated_at!: Date;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'created_by_id' })
+  created_by?: User | null;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by?: User | null;
 }

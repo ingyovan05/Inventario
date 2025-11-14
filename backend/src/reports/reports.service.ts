@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 export class ReportsService {
   constructor(private readonly dataSource: DataSource) {}
 
-  async summary(from?: string, to?: string) {
+  async summary(from?: string, to?: string, userId?: number) {
     const qb = this.dataSource.createQueryRunner();
     await qb.connect();
     try {
@@ -18,6 +18,10 @@ export class ReportsService {
       if (to) {
         where.push(`s.date <= $${params.length + 1}`);
         params.push(new Date(to));
+      }
+      if (userId) {
+        where.push(`s.created_by_id = $${params.length + 1}`);
+        params.push(userId);
       }
       const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
       const salesAgg = await qb.query(
@@ -33,7 +37,7 @@ export class ReportsService {
     }
   }
 
-  async topProducts(limit = 10, from?: string, to?: string) {
+  async topProducts(limit = 10, from?: string, to?: string, userId?: number) {
     const qb = this.dataSource.createQueryRunner();
     await qb.connect();
     try {
@@ -46,6 +50,10 @@ export class ReportsService {
       if (to) {
         where.push(`s.date <= $${params.length + 1}`);
         params.push(new Date(to));
+      }
+      if (userId) {
+        where.push(`s.created_by_id = $${params.length + 1}`);
+        params.push(userId);
       }
       const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
       const res = await qb.query(
@@ -65,4 +73,3 @@ export class ReportsService {
     }
   }
 }
-

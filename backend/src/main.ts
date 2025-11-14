@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
+import { AuditService } from './audit/audit.service.js';
 import dotenv from 'dotenv';
 import { AuthService } from './auth/auth.service.js';
 

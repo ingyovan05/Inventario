@@ -31,14 +31,32 @@ import { MatIconModule } from '@angular/material/icon';
           <td mat-cell *matCellDef="let s">{{ s.name }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Activo</th>
+          <td mat-cell *matCellDef="let s">{{ s.active ? 'Sí' : 'No' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="created">
+          <th mat-header-cell *matHeaderCellDef>Creado por</th>
+          <td mat-cell *matCellDef="let s">{{ s.created_by?.username || '-' }}<br><small>{{ s.created_at | date:'short' }}</small></td>
+        </ng-container>
+
+        <ng-container matColumnDef="updated">
+          <th mat-header-cell *matHeaderCellDef>Modificado por</th>
+          <td mat-cell *matCellDef="let s">{{ s.updated_by?.username || '-' }}<br><small>{{ s.updated_at | date:'short' }}</small></td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef style="width:180px;">Acciones</th>
+          <th mat-header-cell *matHeaderCellDef style="width:220px;">Acciones</th>
           <td mat-cell *matCellDef="let s">
             <a mat-button color="primary" [routerLink]="['/sizes', s.id, 'edit']">
               <mat-icon style="margin-right:4px;">edit</mat-icon> Editar
             </a>
-            <button mat-button color="warn" (click)="remove(s)">
-              <mat-icon style="margin-right:4px;">delete</mat-icon> Eliminar
+            <button mat-button color="warn" *ngIf="s.active" (click)="deactivate(s)">
+              <mat-icon style="margin-right:4px;">block</mat-icon> Desactivar
+            </button>
+            <button mat-button color="primary" *ngIf="!s.active" (click)="activate(s)">
+              <mat-icon style="margin-right:4px;">check_circle</mat-icon> Activar
             </button>
           </td>
         </ng-container>
@@ -54,7 +72,7 @@ export class SizesListComponent implements OnInit {
   api = inject(ApiService);
   router = inject(Router);
   sizes: Size[] = [];
-  displayedColumns: string[] = ['id','name','actions'];
+  displayedColumns: string[] = ['id','name','active','created','updated','actions'];
 
   ngOnInit(): void {
     this.reload();
@@ -64,9 +82,11 @@ export class SizesListComponent implements OnInit {
     this.api.listSizes().subscribe((res) => this.sizes = res);
   }
 
-  remove(s: Size) {
-    if (!confirm(`Eliminar talla "${s.name}"?`)) return;
+  deactivate(s: Size) {
+    if (!confirm(`Desactivar talla "${s.name}"?`)) return;
     this.api.deleteSize(s.id).subscribe(() => this.reload());
   }
+  activate(s: any) {
+    this.api.updateSize((s as any).id, { active: true }).subscribe(() => this.reload());
+  }
 }
-

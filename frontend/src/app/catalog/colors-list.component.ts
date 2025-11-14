@@ -31,14 +31,32 @@ import { MatIconModule } from '@angular/material/icon';
           <td mat-cell *matCellDef="let c">{{ c.name }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="active">
+          <th mat-header-cell *matHeaderCellDef>Activo</th>
+          <td mat-cell *matCellDef="let c">{{ c.active ? 'Sí' : 'No' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="created">
+          <th mat-header-cell *matHeaderCellDef>Creado por</th>
+          <td mat-cell *matCellDef="let c">{{ c.created_by?.username || '-' }}<br><small>{{ c.created_at | date:'short' }}</small></td>
+        </ng-container>
+
+        <ng-container matColumnDef="updated">
+          <th mat-header-cell *matHeaderCellDef>Modificado por</th>
+          <td mat-cell *matCellDef="let c">{{ c.updated_by?.username || '-' }}<br><small>{{ c.updated_at | date:'short' }}</small></td>
+        </ng-container>
+
         <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef style="width:180px;">Acciones</th>
+          <th mat-header-cell *matHeaderCellDef style="width:220px;">Acciones</th>
           <td mat-cell *matCellDef="let c">
             <a mat-button color="primary" [routerLink]="['/colors', c.id, 'edit']">
               <mat-icon style="margin-right:4px;">edit</mat-icon> Editar
             </a>
-            <button mat-button color="warn" (click)="remove(c)">
-              <mat-icon style="margin-right:4px;">delete</mat-icon> Eliminar
+            <button mat-button color="warn" *ngIf="c.active" (click)="deactivate(c)">
+              <mat-icon style="margin-right:4px;">block</mat-icon> Desactivar
+            </button>
+            <button mat-button color="primary" *ngIf="!c.active" (click)="activate(c)">
+              <mat-icon style="margin-right:4px;">check_circle</mat-icon> Activar
             </button>
           </td>
         </ng-container>
@@ -54,7 +72,7 @@ export class ColorsListComponent implements OnInit {
   api = inject(ApiService);
   router = inject(Router);
   colors: Color[] = [];
-  displayedColumns: string[] = ['id','name','actions'];
+  displayedColumns: string[] = ['id','name','active','created','updated','actions'];
 
   ngOnInit(): void {
     this.reload();
@@ -64,9 +82,11 @@ export class ColorsListComponent implements OnInit {
     this.api.listColors().subscribe((res) => this.colors = res);
   }
 
-  remove(c: Color) {
-    if (!confirm(`Eliminar color "${c.name}"?`)) return;
+  deactivate(c: Color) {
+    if (!confirm(`Desactivar color "${c.name}"?`)) return;
     this.api.deleteColor(c.id).subscribe(() => this.reload());
   }
+  activate(c: any) {
+    this.api.updateColor((c as any).id, { active: true }).subscribe(() => this.reload());
+  }
 }
-

@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Product } from './product.entity.js';
 import { Sale } from './sale.entity.js';
+import { User } from './user.entity.js';
 
 @Entity('sale_items')
 export class SaleItem {
@@ -23,4 +24,18 @@ export class SaleItem {
 
   @Column({ type: 'numeric', precision: 12, scale: 2 })
   subtotal!: string;
+
+  @CreateDateColumn()
+  created_at!: Date;
+
+  @UpdateDateColumn()
+  updated_at!: Date;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'created_by_id' })
+  created_by?: User | null;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by?: User | null;
 }

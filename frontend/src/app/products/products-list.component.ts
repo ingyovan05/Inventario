@@ -44,6 +44,16 @@ import { MatIconModule } from '@angular/material/icon';
           <td mat-cell *matCellDef="let p">{{ p.color?.name || '-' }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="created">
+          <th mat-header-cell *matHeaderCellDef>Creado por</th>
+          <td mat-cell *matCellDef="let p">{{ p.created_by?.username || '-' }}<br><small>{{ p.created_at | date:'short' }}</small></td>
+        </ng-container>
+
+        <ng-container matColumnDef="updated">
+          <th mat-header-cell *matHeaderCellDef>Modificado por</th>
+          <td mat-cell *matCellDef="let p">{{ p.updated_by?.username || '-' }}<br><small>{{ p.updated_at | date:'short' }}</small></td>
+        </ng-container>
+
         <ng-container matColumnDef="price">
           <th mat-header-cell *matHeaderCellDef style="text-align:right;">Precio</th>
           <td mat-cell *matCellDef="let p" style="text-align:right;">{{ p.price }}</td>
@@ -82,6 +92,8 @@ import { MatIconModule } from '@angular/material/icon';
           <div class="item-card__row"><span>Color</span><span>{{ p.color?.name || '-' }}</span></div>
           <div class="item-card__row"><span>Precio</span><span>{{ p.price }}</span></div>
           <div class="item-card__row"><span>Stock</span><span>{{ p.stock }}</span></div>
+          <div class="item-card__row"><span>Creado por</span><span>{{ p.created_by?.username || '-' }}</span></div>
+          <div class="item-card__row"><span>Modificado por</span><span>{{ p.updated_by?.username || '-' }}</span></div>
           <div class="item-card__actions">
             <a mat-button color="primary" [routerLink]="['/products', p.id, 'edit']">
               <mat-icon>edit</mat-icon> Editar
@@ -100,7 +112,7 @@ export class ProductsListComponent implements OnInit {
   api = inject(ApiService);
   bp = inject(BreakpointObserver);
   products: Product[] = [];
-  displayedColumns: string[] = ['sku','name','size','color','price','stock','actions'];
+  displayedColumns: string[] = ['sku','name','size','color','created','updated','price','stock','actions'];
   isHandset = false;
 
   ngOnInit(): void {

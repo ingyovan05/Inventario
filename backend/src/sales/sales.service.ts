@@ -15,8 +15,9 @@ export class SalesService {
     @InjectRepository(Product) private productRepo: Repository<Product>
   ) {}
 
-  findAll() {
-    return this.salesRepo.find({ relations: { items: { product: true } } });
+  findAll(userId?: number) {
+    const where = userId ? { created_by: { id: userId } } : {};
+    return this.salesRepo.find({ where: where as any, relations: { items: { product: true }, created_by: true, updated_by: true } });
   }
 
   async findOne(id: number) {
@@ -25,7 +26,7 @@ export class SalesService {
     return sale;
   }
 
-  async create(dto: CreateSaleDto) {
+  async create(dto: CreateSaleDto, userId?: number) {
     if (!dto.items?.length) throw new BadRequestException('Sale must have at least one item');
 
     const qr = this.dataSource.createQueryRunner();
@@ -51,7 +52,9 @@ export class SalesService {
           product,
           quantity: item.quantity,
           unit_price: (Number(unitPrice) / 100).toFixed(2),
-          subtotal: (Number(subtotal) / 100).toFixed(2)
+          subtotal: (Number(subtotal) / 100).toFixed(2),
+          created_by: userId ? ({ id: userId } as any) : null,
+          updated_by: userId ? ({ id: userId } as any) : null
         });
         items.push(saleItem);
       }
@@ -60,7 +63,9 @@ export class SalesService {
         date: dto.date ? new Date(dto.date) : new Date(),
         total: (Number(total) / 100).toFixed(2),
         payment_method: dto.payment_method,
-        items
+        items,
+        created_by: userId ? ({ id: userId } as any) : null,
+        updated_by: userId ? ({ id: userId } as any) : null
       });
       const saved = await qr.manager.save(sale);
       await qr.commitTransaction();
@@ -73,4 +78,3 @@ export class SalesService {
     }
   }
 }
-

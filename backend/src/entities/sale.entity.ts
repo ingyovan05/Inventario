@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { SaleItem } from './sale-item.entity.js';
+import { User } from './user.entity.js';
 
 @Entity('sales')
 export class Sale {
@@ -18,7 +19,17 @@ export class Sale {
   @CreateDateColumn()
   created_at!: Date;
 
+  @UpdateDateColumn()
+  updated_at!: Date;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'created_by_id' })
+  created_by?: User | null;
+
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'updated_by_id' })
+  updated_by?: User | null;
+
   @OneToMany(() => SaleItem, (item) => item.sale, { cascade: true })
   items!: SaleItem[];
 }
-

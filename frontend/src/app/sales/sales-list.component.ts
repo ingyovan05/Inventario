@@ -1,4 +1,4 @@
-﻿import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../services/api';
@@ -9,11 +9,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { MatSelectModule } from '@angular/material/select';
 @Component({
   standalone: true,
   selector: 'app-sales-list',
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, LayoutModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, MatSelectModule, LayoutModule],
   template: `
     <div class="card" style="margin-bottom:16px;">
       <h2>Resumen de ventas</h2>
@@ -29,6 +29,13 @@ import { MatNativeDateModule } from '@angular/material/core';
           <input matInput [matDatepicker]="toPicker" formControlName="to">
           <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
           <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Usuario (creador)</mat-label>
+          <mat-select formControlName="userId">
+            <mat-option [value]="''">Todos</mat-option>
+            <mat-option *ngFor="let u of users" [value]="u.id">{{ u.username }}</mat-option>
+          </mat-select>
         </mat-form-field>
         <button mat-raised-button color="primary" type="submit">Aplicar</button>
       </form>
@@ -46,6 +53,8 @@ import { MatNativeDateModule } from '@angular/material/core';
             <th style="text-align:left; padding:8px;">ID</th>
             <th style="text-align:left; padding:8px;">Fecha</th>
             <th style="text-align:left; padding:8px;">Método</th>
+            <th style="text-align:left; padding:8px;">Creado por</th>
+            <th style="text-align:left; padding:8px;">Modificado por</th>
             <th style="text-align:right; padding:8px;">Items</th>
             <th style="text-align:right; padding:8px;">Total</th>
           </tr>
@@ -56,6 +65,8 @@ import { MatNativeDateModule } from '@angular/material/core';
             <td style="padding:8px;">{{(s.date || '') | date:'short'}}</td>
             <td style="padding:8px;">{{s.payment_method || '-'}}
             </td>
+            <td style="padding:8px;">{{s.created_by?.username || '-'}}<br><small>{{ s.created_at | date:'short' }}</small></td>
+            <td style="padding:8px;">{{s.updated_by?.username || '-'}}<br><small>{{ s.updated_at | date:'short' }}</small></td>
             <td style="padding:8px; text-align:right;">{{s.items?.length || 0}}</td>
             <td style="padding:8px; text-align:right;">{{s.total}}</td>
           </tr>
@@ -70,6 +81,8 @@ import { MatNativeDateModule } from '@angular/material/core';
           </div>
           <div class="item-card__row"><span>Método</span><span>{{ s.payment_method || '-' }}</span></div>
           <div class="item-card__row"><span>Items</span><span>{{ s.items?.length || 0 }}</span></div>
+          <div class="item-card__row"><span>Creado por</span><span>{{ s.created_by?.username || '-' }}<br><small>{{ s.created_at | date:'short' }}</small></span></div>
+          <div class="item-card__row"><span>Modificado por</span><span>{{ s.updated_by?.username || '-' }}<br><small>{{ s.updated_at | date:'short' }}</small></span></div>
           <div class="item-card__row"><span>Total</span><span>{{ s.total }}</span></div>
         </div>
       </div>
@@ -81,11 +94,12 @@ export class SalesListComponent implements OnInit {
   fb = inject(FormBuilder);
   bp = inject(BreakpointObserver);
 
-  filters = this.fb.group({ from: [''], to: [''] });
+  filters = this.fb.group({ from: [''], to: [''], userId: [''] });
   sales: any[] = [];
   filteredSales: any[] = [];
   summary: any;
   isHandset = false;
+  users: any[] = [];
 
   ngOnInit(): void { this.load(); this.bp.observe([Breakpoints.Handset]).subscribe(r => this.isHandset = r.matches); }
 
@@ -95,11 +109,12 @@ export class SalesListComponent implements OnInit {
     if (f.from) params.from = this.asDateStr(f.from);
     if (f.to) params.to = this.asDateStr(f.to);
 
-    this.api.listSales().subscribe((rows) => {
+    this.api.listSales(params).subscribe((rows) => {
       this.sales = rows;
       this.applyFilter();
     });
     this.api.summary(params).subscribe((s) => (this.summary = s));
+    this.api.listUsers().subscribe({ next: (rows) => (this.users = rows), error: () => (this.users = []) });
   }
 
   private asDateStr(d: any): string | undefined {
