@@ -23,5 +23,12 @@ export class CreateProductDto {
   @IsBoolean()
   @IsOptional()
   active?: boolean;
-}
 
+  @IsInt()
+  @IsOptional()
+  sizeId?: number;
+
+  @IsInt()
+  @IsOptional()
+  colorId?: number;
+}

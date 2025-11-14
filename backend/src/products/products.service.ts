@@ -10,23 +10,29 @@ export class ProductsService {
   constructor(@InjectRepository(Product) private repo: Repository<Product>) {}
 
   findAll() {
-    return this.repo.find({ where: {} });
+    return this.repo.find({ where: {}, relations: { size: true, color: true } });
   }
 
   async findOne(id: number) {
-    const p = await this.repo.findOne({ where: { id } });
+    const p = await this.repo.findOne({ where: { id }, relations: { size: true, color: true } });
     if (!p) throw new NotFoundException('Product not found');
     return p;
   }
 
   async create(dto: CreateProductDto) {
-    const product = this.repo.create(dto);
+    const { sizeId, colorId, ...rest } = dto as any;
+    const product = this.repo.create(rest);
+    if (sizeId) (product as any).size = { id: sizeId } as any;
+    if (colorId) (product as any).color = { id: colorId } as any;
     return this.repo.save(product);
   }
 
   async update(id: number, dto: UpdateProductDto) {
     const product = await this.findOne(id);
-    Object.assign(product, dto);
+    const { sizeId, colorId, ...rest } = dto as any;
+    Object.assign(product, rest);
+    if (sizeId !== undefined) (product as any).size = sizeId ? ({ id: sizeId } as any) : null;
+    if (colorId !== undefined) (product as any).color = colorId ? ({ id: colorId } as any) : null;
     return this.repo.save(product);
   }
 

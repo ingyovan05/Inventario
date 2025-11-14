@@ -10,16 +10,31 @@ import { ProductRestockComponent } from './app/products/product-restock.componen
 import { SalesNewComponent } from './app/sales/sales-new.component';
 import { SalesListComponent } from './app/sales/sales-list.component';
 import { DashboardComponent } from './app/dashboard/dashboard.component';
+import { SizesListComponent } from './app/catalog/sizes-list.component';
+import { SizeFormComponent } from './app/catalog/size-form.component';
+import { ColorsListComponent } from './app/catalog/colors-list.component';
+import { ColorFormComponent } from './app/catalog/color-form.component';
+import { LoginComponent } from './app/auth/login.component';
+import { authGuard, adminGuard } from './app/auth/auth.guard';
+import { UsersListComponent } from './app/admin/users-list.component';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'products', component: ProductsListComponent },
-  { path: 'products/new', component: ProductFormComponent },
-  { path: 'products/:id/edit', component: ProductFormComponent },
-  { path: 'products/:id/restock', component: ProductRestockComponent },
-  { path: 'sales/new', component: SalesNewComponent }
-  ,{ path: 'sales', component: SalesListComponent }
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
+  { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'products', component: ProductsListComponent, canActivate: [authGuard] },
+  { path: 'products/new', component: ProductFormComponent, canActivate: [authGuard] },
+  { path: 'products/:id/edit', component: ProductFormComponent, canActivate: [authGuard] },
+  { path: 'products/:id/restock', component: ProductRestockComponent, canActivate: [authGuard] },
+  { path: 'sales/new', component: SalesNewComponent, canActivate: [authGuard] }
+  ,{ path: 'sales', component: SalesListComponent, canActivate: [authGuard] }
+  ,{ path: 'sizes', component: SizesListComponent, canActivate: [authGuard] }
+  ,{ path: 'sizes/new', component: SizeFormComponent, canActivate: [authGuard] }
+  ,{ path: 'sizes/:id/edit', component: SizeFormComponent, canActivate: [authGuard] }
+  ,{ path: 'colors', component: ColorsListComponent, canActivate: [authGuard] }
+  ,{ path: 'colors/new', component: ColorFormComponent, canActivate: [authGuard] }
+  ,{ path: 'colors/:id/edit', component: ColorFormComponent, canActivate: [authGuard] }
+  ,{ path: 'admin/users', component: UsersListComponent, canActivate: [adminGuard] }
 ];
 
 bootstrapApplication(AppComponent, {

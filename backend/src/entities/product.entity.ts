@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Size } from './size.entity.js';
+import { Color } from './color.entity.js';
 
 @Entity('products')
 export class Product {
@@ -23,10 +25,17 @@ export class Product {
   @Column({ type: 'boolean', default: true })
   active!: boolean;
 
+  @ManyToOne(() => Size, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'size_id' })
+  size?: Size | null;
+
+  @ManyToOne(() => Color, { nullable: true, onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'color_id' })
+  color?: Color | null;
+
   @CreateDateColumn()
   created_at!: Date;
 
   @UpdateDateColumn()
   updated_at!: Date;
 }
-

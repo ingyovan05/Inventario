@@ -2,6 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../services/api';
+import { BreakpointObserver, Breakpoints, LayoutModule } from '@angular/cdk/layout';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -12,11 +13,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 @Component({
   standalone: true,
   selector: 'app-sales-list',
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, LayoutModule],
   template: `
     <div class="card" style="margin-bottom:16px;">
       <h2>Resumen de ventas</h2>
-      <form [formGroup]="filters" (ngSubmit)="load()" style="display:flex; gap:12px; align-items:center;">
+      <form [formGroup]="filters" (ngSubmit)="load()" style="display:flex; gap:12px; align-items:center; flex-wrap: wrap;">
         <mat-form-field appearance="outline">
           <mat-label>Desde</mat-label>
           <input matInput [matDatepicker]="fromPicker" formControlName="from">
@@ -38,7 +39,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     </div>
     <div class="card">
       <h3>Listado</h3>
-      <table style="width:100%; border-collapse:collapse;">
+      <div class="table-responsive" *ngIf="!isHandset">
+      <table style="width:100%; border-collapse:collapse; min-width:640px;">
         <thead>
           <tr>
             <th style="text-align:left; padding:8px;">ID</th>
@@ -59,19 +61,33 @@ import { MatNativeDateModule } from '@angular/material/core';
           </tr>
         </tbody>
       </table>
+      </div>
+      <div *ngIf="isHandset" style="display:grid; gap:12px;">
+        <div class="item-card" *ngFor="let s of filteredSales">
+          <div class="item-card__header">
+            <div class="item-card__title">Venta #{{s.id}}</div>
+            <div class="item-card__subtitle">{{ (s.date || '') | date:'short' }}</div>
+          </div>
+          <div class="item-card__row"><span>Método</span><span>{{ s.payment_method || '-' }}</span></div>
+          <div class="item-card__row"><span>Items</span><span>{{ s.items?.length || 0 }}</span></div>
+          <div class="item-card__row"><span>Total</span><span>{{ s.total }}</span></div>
+        </div>
+      </div>
     </div>
   `
 })
 export class SalesListComponent implements OnInit {
   api = inject(ApiService);
   fb = inject(FormBuilder);
+  bp = inject(BreakpointObserver);
 
   filters = this.fb.group({ from: [''], to: [''] });
   sales: any[] = [];
   filteredSales: any[] = [];
   summary: any;
+  isHandset = false;
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void { this.load(); this.bp.observe([Breakpoints.Handset]).subscribe(r => this.isHandset = r.matches); }
 
   load() {
     const params: any = {};

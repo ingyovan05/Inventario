@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 import { ValidationPipe } from '@nestjs/common';
 import dotenv from 'dotenv';
+import { AuthService } from './auth/auth.service.js';
 
 dotenv.config();
 
@@ -17,10 +18,13 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true }
     })
   );
+  // Seed admin user if missing
+  await app.get(AuthService).ensureAdminSeed();
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
-  await app.listen(port);
+  const host = process.env.HOST || '0.0.0.0';
+  await app.listen(port, host);
   // eslint-disable-next-line no-console
-  console.log(`Backend running on http://localhost:${port}`);
+  console.log(`Backend running on http://${host}:${port}`);
 }
 
 bootstrap();

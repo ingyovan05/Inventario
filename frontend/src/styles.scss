@@ -55,3 +55,52 @@ body {
 
 .container { padding: 16px 20px; }
 .spacer { flex: 1 1 auto; }
+
+/* Cards */
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: clamp(12px, 2vw, 20px);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* Tables responsive wrapper */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Toolbar responsive: allow wrapping/scrolling on small screens */
+.mat-toolbar {
+  flex-wrap: wrap;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+/* Hide full nav on small screens and show hamburger */
+.menu-button { display: none; }
+.nav-links { display: inline-flex; gap: 4px; align-items: center; }
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .menu-button { display: inline-flex; }
+}
+
+/* Mobile item cards */
+.item-card {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+.item-card__header { display:flex; align-items: baseline; justify-content: space-between; gap:8px; margin-bottom:6px; }
+.item-card__title { font-weight: 600; }
+.item-card__subtitle { color: #666; font-size: .9rem; }
+.item-card__row { display:flex; justify-content: space-between; padding: 4px 0; border-top: 1px dashed rgba(0,0,0,0.06); }
+.item-card__row span:first-child { color:#555; }
+
+/* Form fields full width on small screens */
+@media (max-width: 600px) {
+  .container { padding: 12px; }
+  mat-form-field { width: 100%; }
+}
