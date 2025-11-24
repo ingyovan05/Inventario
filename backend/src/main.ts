@@ -26,6 +26,13 @@ async function bootstrap() {
   await app.listen(port, host);
   // eslint-disable-next-line no-console
   console.log(`Backend running on http://${host}:${port}`);
+  console.log(`
+__   __    _    ____  _____ 
+\\ \\ / /   / \\  / ___||  ___|
+ \\ V /   / _ \\ \\___ \\| |_   
+  | |   / ___ \\ ___) |  _|  
+  |_|  /_/   \\_\\____/|_|    
+`);
 }
 
 bootstrap();
