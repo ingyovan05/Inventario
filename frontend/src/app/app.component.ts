@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './auth/auth.service';
+import { SeoService } from './services/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -40,14 +41,14 @@ import { AuthService } from './auth/auth.service';
       <button mat-menu-item routerLink="/sales/new">Nueva venta</button>
       <button mat-menu-item *ngIf="auth.currentUser()?.is_admin" routerLink="/admin/users">Usuarios</button>
     </mat-menu>
-    <div class="container">
+    <main class="container">
       <router-outlet></router-outlet>
-    </div>
+    </main>
   `
 })
-export class AppComponent implements OnInit  {
+export class AppComponent implements OnInit {
   isDark = false;
-  constructor(public auth: AuthService) {}
+  constructor(public auth: AuthService, private seo: SeoService) { }
 
   ngOnInit(): void {
     const saved = localStorage.getItem('theme');
@@ -57,6 +58,8 @@ export class AppComponent implements OnInit  {
       const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
       this.applyTheme(prefersDark ? 'dark' : 'light');
     }
+    this.seo.updateTitle('Inventarios - Gestión Eficiente');
+    this.seo.updateDescription('Bienvenido al sistema de gestión de inventarios. Controla tus productos, ventas y stock de manera sencilla.');
   }
 
   toggleTheme() {

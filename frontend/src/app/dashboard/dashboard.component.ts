@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api';
+import { SeoService } from '../services/seo.service';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import 'chart.js/auto';
@@ -11,7 +12,7 @@ import 'chart.js/auto';
   imports: [CommonModule, NgChartsModule],
   template: `
     <div class="card" style="margin-bottom:16px;">
-      <h2>Resumen</h2>
+      <h1>Resumen</h1>
       <div style="display:flex; gap:16px; flex-wrap: wrap; row-gap: 8px;">
         <div><b>Ventas:</b> {{summary?.sales?.sales_count || 0}}</div>
         <div><b>Total ventas:</b> {{summary?.sales?.total_sales || 0}}</div>
@@ -34,20 +35,22 @@ import 'chart.js/auto';
 })
 export class DashboardComponent implements OnInit {
   api = inject(ApiService);
+  seo = inject(SeoService);
   summary: any;
 
   barChartOptions: ChartOptions<'bar'> = { responsive: true };
   barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [],
-    datasets: [ { data: [], label: 'Unidades vendidas' } ]
+    datasets: [{ data: [], label: 'Unidades vendidas' }]
   };
 
   ngOnInit(): void {
+    this.seo.updateTitle('Resumen - Inventarios');
     this.api.summary({}).subscribe((s) => (this.summary = s));
     this.api.topProducts({ limit: 10 }).subscribe((rows) => {
       this.barChartData = {
         labels: rows.map((r: any) => r.name),
-        datasets: [ { data: rows.map((r: any) => r.qty), label: 'Unidades vendidas' } ]
+        datasets: [{ data: rows.map((r: any) => r.qty), label: 'Unidades vendidas' }]
       };
     });
   }
