@@ -31,6 +31,8 @@ services:
       - backend
     ports:
       - "4200:80"
+    environment:
+      API_URL: http://localhost:3000
 
 volumes:
   db_data:
